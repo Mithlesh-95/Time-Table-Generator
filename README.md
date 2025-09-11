@@ -10,8 +10,7 @@ This README explains how we will **collaborate on GitHub**.
 
 ### 1. Clone the repository (only first time)
 ```bash
-git clone <https://github.com/Mithlesh-95/Time-Table-Generator>
-
-cd <Time-Table-Generator>
+git clone https://github.com/Mithlesh-95/Time-Table-Generator
+cd Time-Table-Generator
 ```
 
