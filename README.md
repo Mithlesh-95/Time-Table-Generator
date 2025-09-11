@@ -1,3 +1,54 @@
+# Getting Started: Complete Setup Guide for New GitHub Users
+
+## Step 1: Clone the Project to Your System
+
+1. **Install Git** (if not already installed):
+   - Download and install Git from: https://git-scm.com/download/windows
+   - Follow the installation wizard with default settings.
+
+2. **Clone the repository**:
+   - Open VS Code.
+   - Open the terminal in VS Code (`Ctrl+`` or from the menu: Terminal > New Terminal).
+   - Navigate to where you want to save the project (e.g., Desktop):
+   ```
+   cd Desktop
+   ```
+   - Clone the repository:
+   ```
+   git clone https://github.com/Mithlesh-95/Time-Table-Generator.git
+   ```
+   - Navigate into the project folder:
+   ```
+   cd Time-Table-Generator
+   ```
+
+## Step 2: Switch from Main Branch to Your Module Branch
+
+After you have cloned the project to your system, follow these steps to switch from the main branch to your assigned module branch using the VS Code terminal:
+
+1. Make sure you are in the project directory (should already be there from Step 1).
+2. List all available branches to confirm they exist:
+   ```
+   git branch -a
+   ```
+3. Switch to your assigned branch:
+   ```
+   git checkout <your-branch-name>
+   ```
+   Replace `<your-branch-name>` with the branch for your module (see the list below).
+
+**Example:**
+```
+git checkout module-3-curriculum-management
+```
+
+4. Verify you're on the correct branch:
+   ```
+   git branch
+   ```
+   (The current branch will be highlighted with an asterisk *)
+
+Now you can start working in your module branch!
 
 # Team Guide: Getting Started
 
