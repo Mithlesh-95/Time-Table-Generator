@@ -88,22 +88,7 @@ This project addresses the complex scheduling challenges introduced by NEP 2020'
 3. **Node.js 16+** for frontend module
 4. **PostgreSQL** for database
 
-### 🔧 Setup Instructions
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/Mithlesh-95/Time-Table-Generator.git
-   cd Time-Table-Generator
-   ```
-
-2. **Create your feature branch:**
-   ```bash
-   git checkout -b feature/module-X-your-name
-   ```
-
-3. **Install dependencies** (specific to your module)
-
-4. **Start development** following your module guidelines
+**Start development** following your module guidelines
 
 ### 📝 Collaboration Guidelines
 
