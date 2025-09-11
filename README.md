@@ -1,3 +1,25 @@
+
+# Team Guide: Getting Started
+
+All module branches have already been created. Each team member should:
+
+1. Identify your assigned module and its corresponding branch from the list below.
+2. Switch to your module branch using:
+   - `git checkout <your-branch-name>`
+3. Work only in your respective branch. When pushing or pulling code, always do so with respect to your module branch:
+   - To push: `git push origin <your-branch-name>`
+   - To pull: `git pull origin <your-branch-name>`
+
+**Branch names:**
+- `module-1-user-auth-system`
+- `module-2-master-data-management`
+- `module-3-curriculum-management`
+- `module-4-scheduling-algorithm`
+- `module-5-frontend-ui`
+- `module-6-report-generation`
+
+Do not add code or implementation details to this README; use it only as a reference for module responsibilities and project structure. Begin development in your branch, following the module guidelines. Use this document as a guide for your tasks and inter-module dependencies.
+
 # 🎓 NEP 2020 Compliant AI-Based Timetable Generator
 
 ## 📋 Team Collaboration Guide for Beginners
