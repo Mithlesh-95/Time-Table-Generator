@@ -79,4 +79,4 @@ This project addresses the complex scheduling challenges introduced by NEP 2020'
 ### 📞 Need Help?
 - Check the [Wiki](https://github.com/Mithlesh-95/Time-Table-Generator/wiki)
 - Create an [Issue](https://github.com/Mithlesh-95/Time-Table-Generator/issues)
-- Contact Team Lead: @Mithlesh-95
+
