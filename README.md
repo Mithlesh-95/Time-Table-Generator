@@ -77,10 +77,9 @@ This project addresses the complex scheduling challenges introduced by NEP 2020'
 4. **Create Pull Request** on GitHub
 
 #### 📞 Communication Channels
-- **Daily Standups:** 9:00 AM
-- **Team Chat:** Project Slack/Discord
+- **Daily Standups:** 7:00 PM
+- **Team Chat:** Whatsapp Group
 - **Code Reviews:** All PRs require 1 approval
-- **Emergency Contact:** Team Lead
 
 ---
 
