@@ -1,0 +1,22 @@
+# Frontend Development Folder
+
+This folder is for all frontend development work.
+
+**Instructions for Frontend Team (Module 5):**
+- Place all your React.js, HTML, CSS, JavaScript files here
+- Create your components, pages, and assets in this directory
+- Follow the project structure suitable for your chosen frontend framework
+- **Deployment:** This folder will be deployed to **Vercel** for optimal performance
+
+**Team Members working on Module 5 (Frontend UI):**
+- Use this folder for all frontend development
+- Keep backend API calls organized and documented
+- Ensure responsive design for all devices
+- Configure API endpoints to connect with the backend hosted on Render
+
+**Hosting Strategy:**
+- Frontend (this folder) → Vercel deployment
+- Backend (api folder) → Render deployment
+- Separate hosting for better performance and scalability
+
+Remember: Work only in your assigned branch (module-5-frontend-ui)

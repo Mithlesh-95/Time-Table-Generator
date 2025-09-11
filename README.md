@@ -50,6 +50,23 @@ git checkout module-3-curriculum-management
 
 Now you can start working in your module branch!
 
+## Project Structure & Folder Guidelines
+
+**Frontend Team (Module 5):**
+- Use the `frontend/` folder for all React.js, HTML, CSS, JavaScript files
+- **Deployment:** Will be hosted on **Vercel** for optimal frontend performance
+
+**Backend Team (Modules 1, 2, 3, 4, 6):**
+- Use the `api/` folder for all backend development
+- Create your Django APIs, database models, and business logic here
+- **Deployment:** Will be hosted on **Render** for optimal Python/Django performance
+
+**Why this hosting strategy?**
+- **Vercel** → Perfect for React.js frontend (fast, reliable, easy deployment)
+- **Render** → Perfect for Python/Django backend (better than Vercel for server-side logic)
+- Separate hosting allows independent scaling and optimization
+- Frontend can easily connect to backend via API calls
+
 # Team Guide: Getting Started
 
 All module branches have already been created. Each team member should:
