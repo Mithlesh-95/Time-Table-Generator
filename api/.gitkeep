@@ -1,0 +1,29 @@
+# Backend API Development Folder
+
+This folder is for all backend/API development work.
+
+**Instructions for Backend Team:**
+- **Module 1 (User Auth):** Place authentication-related API endpoints here
+- **Module 2 (Master Data):** Place data management APIs here  
+- **Module 3 (Curriculum):** Place curriculum management APIs here
+- **Module 4 (Scheduling Algorithm):** Place core scheduling logic and APIs here
+- **Module 6 (Reports):** Place report generation APIs here
+
+**General Guidelines:**
+- Create a well-structured API with proper endpoints
+- Follow RESTful API principles
+- Document your API endpoints clearly
+- **Deployment:** This folder will be deployed to **Render** for optimal Python/Django performance
+
+**Technology Stack:**
+- Django + PostgreSQL recommended
+- Ensure proper database models and migrations
+- Implement proper error handling and validation
+- Configure CORS settings for frontend communication
+
+**Hosting Strategy:**
+- Backend (this folder) → Render deployment (perfect for Python)
+- Frontend (frontend folder) → Vercel deployment
+- Separate hosting for better performance and scalability
+
+Remember: Work only in your assigned branch and coordinate API endpoints with other modules
