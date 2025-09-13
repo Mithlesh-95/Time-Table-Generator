@@ -13,7 +13,8 @@ class Faculty(models.Model):
     first_name = models.CharField(max_length=100)
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="faculties")
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="faculties")
     qualifications = models.CharField(max_length=255, blank=True)
     experience_years = models.PositiveIntegerField(default=0)
     workload_capacity_hours = models.PositiveIntegerField(default=16)
@@ -45,7 +46,8 @@ class Student(models.Model):
     last_name = models.CharField(max_length=100)
     email = models.EmailField(unique=True)
     enrollment_no = models.CharField(max_length=50, unique=True)
-    department = models.ForeignKey(Department, on_delete=models.SET_NULL, null=True, related_name="students")
+    department = models.ForeignKey(
+        Department, on_delete=models.SET_NULL, null=True, related_name="students")
     current_semester = models.CharField(max_length=20)
     major_subjects = models.JSONField(default=list, blank=True)
     minor_subjects = models.JSONField(default=list, blank=True)
@@ -59,26 +61,32 @@ class Student(models.Model):
 class Subject(models.Model):
     code = models.CharField(max_length=50, unique=True)
     name = models.CharField(max_length=255)
-    category = models.CharField(max_length=50, help_text="NEP category: Major/Minor/SEC/VAC/AEC")
+    category = models.CharField(
+        max_length=50, help_text="NEP category: Major/Minor/SEC/VAC/AEC")
     credits_theory = models.PositiveIntegerField(default=0)
     credits_practical = models.PositiveIntegerField(default=0)
-    prerequisites = models.ManyToManyField("self", symmetrical=False, blank=True)
-    departments = models.ManyToManyField(Department, related_name="subjects", blank=True)
+    prerequisites = models.ManyToManyField(
+        "self", symmetrical=False, blank=True)
+    departments = models.ManyToManyField(
+        Department, related_name="subjects", blank=True)
 
     def __str__(self):
         return f"{self.code} - {self.name}"
 
 
 class Expertise(models.Model):
-    faculty = models.ForeignKey(Faculty, on_delete=models.CASCADE, related_name="expertise")
-    subject = models.ForeignKey(Subject, on_delete=models.CASCADE, related_name="experts")
+    faculty = models.ForeignKey(
+        Faculty, on_delete=models.CASCADE, related_name="expertise")
+    subject = models.ForeignKey(
+        Subject, on_delete=models.CASCADE, related_name="experts")
 
     class Meta:
         unique_together = ("faculty", "subject")
 
 
 class Section(models.Model):
-    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="sections")
+    department = models.ForeignKey(
+        Department, on_delete=models.CASCADE, related_name="sections")
     semester = models.CharField(max_length=20)
     name = models.CharField(max_length=50)
     size = models.PositiveIntegerField(default=0)

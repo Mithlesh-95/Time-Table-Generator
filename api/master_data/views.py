@@ -58,15 +58,18 @@ class FacultyViewSet(viewsets.ModelViewSet):
             return Response({"detail": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            df = pd.read_excel(file) if file.name.endswith(".xlsx") else pd.read_csv(file)
-            required_cols = {"first_name", "last_name", "email", "department_code"}
+            df = pd.read_excel(file) if file.name.endswith(
+                ".xlsx") else pd.read_csv(file)
+            required_cols = {"first_name", "last_name",
+                             "email", "department_code"}
             if not required_cols.issubset(df.columns):
                 return Response({"detail": f"Missing columns: {required_cols - set(df.columns)}"}, status=400)
 
             with transaction.atomic():
                 created = 0
                 for _, row in df.iterrows():
-                    dept, _ = Department.objects.get_or_create(code=row["department_code"], defaults={"name": row.get("department_name", row["department_code"])})
+                    dept, _ = Department.objects.get_or_create(code=row["department_code"], defaults={
+                                                               "name": row.get("department_name", row["department_code"])})
                     Faculty.objects.update_or_create(
                         email=row["email"],
                         defaults={
@@ -99,15 +102,18 @@ class StudentViewSet(viewsets.ModelViewSet):
             return Response({"detail": "No file provided"}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
-            df = pd.read_excel(file) if file.name.endswith(".xlsx") else pd.read_csv(file)
-            required_cols = {"first_name", "last_name", "email", "enrollment_no", "department_code", "current_semester"}
+            df = pd.read_excel(file) if file.name.endswith(
+                ".xlsx") else pd.read_csv(file)
+            required_cols = {"first_name", "last_name", "email",
+                             "enrollment_no", "department_code", "current_semester"}
             if not required_cols.issubset(df.columns):
                 return Response({"detail": f"Missing columns: {required_cols - set(df.columns)}"}, status=400)
 
             with transaction.atomic():
                 created = 0
                 for _, row in df.iterrows():
-                    dept, _ = Department.objects.get_or_create(code=row["department_code"], defaults={"name": row.get("department_name", row["department_code"])})
+                    dept, _ = Department.objects.get_or_create(code=row["department_code"], defaults={
+                                                               "name": row.get("department_name", row["department_code"])})
                     Student.objects.update_or_create(
                         enrollment_no=row["enrollment_no"],
                         defaults={

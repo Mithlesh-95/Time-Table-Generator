@@ -17,7 +17,8 @@ class CustomJSONRenderer(JSONRenderer):
         # If DRF pagination provided 'results'
         if isinstance(data, dict) and "results" in data and "count" in data:
             page = renderer_context.get("request").query_params.get("page", 1)
-            limit = renderer_context.get("request").query_params.get("page_size", 20)
+            limit = renderer_context.get(
+                "request").query_params.get("page_size", 20)
             wrapped = {
                 "success": success,
                 "data": data.get("results", []),
@@ -32,7 +33,8 @@ class CustomJSONRenderer(JSONRenderer):
 
         if isinstance(data, dict) and ("detail" in data or "errors" in data):
             # error case
-            wrapped = {"success": False, "data": None, "message": data.get("detail"), "errors": data.get("errors")}
+            wrapped = {"success": False, "data": None, "message": data.get(
+                "detail"), "errors": data.get("errors")}
             return super().render(wrapped, accepted_media_type, renderer_context)
 
         wrapped = {"success": success, "data": data}
@@ -42,5 +44,6 @@ class CustomJSONRenderer(JSONRenderer):
 def custom_exception_handler(exc, context):
     response = exception_handler(exc, context)
     if response is not None and isinstance(response.data, dict):
-        response.data = {"success": False, "data": None, "message": response.data.get("detail"), "errors": response.data}
+        response.data = {"success": False, "data": None, "message": response.data.get(
+            "detail"), "errors": response.data}
     return response

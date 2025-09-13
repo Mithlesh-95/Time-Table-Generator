@@ -75,4 +75,5 @@ class SectionSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Section
-        fields = ["id", "department", "department_id", "semester", "name", "size"]
+        fields = ["id", "department", "department_id",
+                  "semester", "name", "size"]
