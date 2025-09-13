@@ -1,0 +1,3 @@
+first_name,last_name,email,department_code,department_name,qualifications,experience_years,workload_capacity_hours
+Alice,Sharma,alice.sharma@example.com,CSE,Computer Science,B.Tech,5,16
+Ravi,Kumar,ravi.kumar@example.com,EEE,Electrical Engineering,M.Tech,8,18

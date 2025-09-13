@@ -21,9 +21,11 @@ import MenuIcon from "@mui/icons-material/Menu"
 import DashboardIcon from "@mui/icons-material/Dashboard"
 import CalendarViewWeekIcon from "@mui/icons-material/CalendarViewWeek"
 import AssessmentIcon from "@mui/icons-material/Assessment"
+import SchoolIcon from "@mui/icons-material/School"
 
 const navigationItems = [
   { label: "Dashboard", path: "/dashboard", icon: <DashboardIcon /> },
+  { label: "Add Data", path: "/master-data", icon: <SchoolIcon /> },
   { label: "Timetable View", path: "/timetable", icon: <CalendarViewWeekIcon /> },
   { label: "Reports", path: "/reports", icon: <AssessmentIcon /> },
 ]
