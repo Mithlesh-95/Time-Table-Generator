@@ -1,3 +1,93 @@
+# Getting Started: Complete Setup Guide for New GitHub Users
+
+## Step 1: Clone the Project to Your System
+
+1. **Install Git** (if not already installed):
+   - Download and install Git from: https://git-scm.com/download/windows
+   - Follow the installation wizard with default settings.
+
+2. **Clone the repository**:
+   - Open VS Code.
+   - Open the terminal in VS Code (`Ctrl+`` or from the menu: Terminal > New Terminal).
+   - Navigate to where you want to save the project (e.g., Desktop):
+   ```
+   cd Desktop
+   ```
+   - Clone the repository:
+   ```
+   git clone https://github.com/Mithlesh-95/Time-Table-Generator.git
+   ```
+   - Navigate into the project folder:
+   ```
+   cd Time-Table-Generator
+   ```
+
+## Step 2: Switch from Main Branch to Your Module Branch
+
+After you have cloned the project to your system, follow these steps to switch from the main branch to your assigned module branch using the VS Code terminal:
+
+1. Make sure you are in the project directory (should already be there from Step 1).
+2. List all available branches to confirm they exist:
+   ```
+   git branch -a
+   ```
+3. Switch to your assigned branch:
+   ```
+   git checkout <your-branch-name>
+   ```
+   Replace `<your-branch-name>` with the branch for your module (see the list below).
+
+**Example:**
+```
+git checkout module-3-curriculum-management
+```
+
+4. Verify you're on the correct branch:
+   ```
+   git branch
+   ```
+   (The current branch will be highlighted with an asterisk *)
+
+Now you can start working in your module branch!
+
+## Project Structure & Folder Guidelines
+
+**Frontend Team (Module 5):**
+- Use the `frontend/` folder for all React.js, HTML, CSS, JavaScript files
+- **Deployment:** Will be hosted on **Vercel** for optimal frontend performance
+
+**Backend Team (Modules 1, 2, 3, 4, 6):**
+- Use the `api/` folder for all backend development
+- Create your Django APIs, database models, and business logic here
+- **Deployment:** Will be hosted on **Render** for optimal Python/Django performance
+
+**Why this hosting strategy?**
+- **Vercel** → Perfect for React.js frontend (fast, reliable, easy deployment)
+- **Render** → Perfect for Python/Django backend (better than Vercel for server-side logic)
+- Separate hosting allows independent scaling and optimization
+- Frontend can easily connect to backend via API calls
+
+# Team Guide: Getting Started
+
+All module branches have already been created. Each team member should:
+
+1. Identify your assigned module and its corresponding branch from the list below.
+2. Switch to your module branch using:
+   - `git checkout <your-branch-name>`
+3. Work only in your respective branch. When pushing or pulling code, always do so with respect to your module branch:
+   - To push: `git push origin <your-branch-name>`
+   - To pull: `git pull origin <your-branch-name>`
+
+**Branch names:**
+- `module-1-user-auth-system`
+- `module-2-master-data-management`
+- `module-3-curriculum-management`
+- `module-4-scheduling-algorithm`
+- `module-5-frontend-ui`
+- `module-6-report-generation`
+
+Do not add code or implementation details to this README; use it only as a reference for module responsibilities and project structure. Begin development in your branch, following the module guidelines. Use this document as a guide for your tasks and inter-module dependencies.
+
 # 🎓 NEP 2020 Compliant AI-Based Timetable Generator
 
 ## 📋 Team Collaboration Guide for Beginners
@@ -15,22 +105,7 @@ This project addresses the complex scheduling challenges introduced by NEP 2020'
 3. **Node.js 16+** for frontend module
 4. **PostgreSQL** for database
 
-### 🔧 Setup Instructions
-
-1. **Clone the Repository:**
-   ```bash
-   git clone https://github.com/Mithlesh-95/Time-Table-Generator.git
-   cd Time-Table-Generator
-   ```
-
-2. **Create your feature branch:**
-   ```bash
-   git checkout -b feature/module-X-your-name
-   ```
-
-3. **Install dependencies** (specific to your module)
-
-4. **Start development** following your module guidelines
+**Start development** following your module guidelines
 
 ### 📝 Collaboration Guidelines
 
@@ -55,10 +130,9 @@ This project addresses the complex scheduling challenges introduced by NEP 2020'
 4. **Create Pull Request** on GitHub
 
 #### 📞 Communication Channels
-- **Daily Standups:** 9:00 AM
-- **Team Chat:** Project Slack/Discord
+- **Daily Standups:** 7:00 PM
+- **Team Chat:** Whatsapp Group
 - **Code Reviews:** All PRs require 1 approval
-- **Emergency Contact:** Team Lead
 
 ---
 
