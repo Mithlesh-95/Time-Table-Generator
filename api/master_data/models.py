@@ -5,6 +5,9 @@ class Department(models.Model):
     name = models.CharField(max_length=200, unique=True)
     code = models.CharField(max_length=20, unique=True)
 
+    class Meta:
+        ordering = ['code']
+
     def __str__(self):
         return f"{self.code} - {self.name}"
 
@@ -21,6 +24,9 @@ class Faculty(models.Model):
     availability = models.JSONField(default=dict, blank=True)
     preferences = models.JSONField(default=dict, blank=True)
 
+    class Meta:
+        ordering = ['last_name', 'first_name']
+
     def __str__(self):
         return f"{self.first_name} {self.last_name}"
 
@@ -36,6 +42,9 @@ class Room(models.Model):
     capacity = models.PositiveIntegerField()
     equipment = models.JSONField(default=list, blank=True)
     constraints = models.JSONField(default=dict, blank=True)
+
+    class Meta:
+        ordering = ['number']
 
     def __str__(self):
         return f"{self.number} ({self.room_type})"
@@ -54,6 +63,9 @@ class Student(models.Model):
     elective_preferences = models.JSONField(default=list, blank=True)
     credit_requirements = models.JSONField(default=dict, blank=True)
 
+    class Meta:
+        ordering = ['enrollment_no']
+
     def __str__(self):
         return f"{self.enrollment_no} - {self.first_name} {self.last_name}"
 
@@ -69,6 +81,9 @@ class Subject(models.Model):
         "self", symmetrical=False, blank=True)
     departments = models.ManyToManyField(
         Department, related_name="subjects", blank=True)
+
+    class Meta:
+        ordering = ['code']
 
     def __str__(self):
         return f"{self.code} - {self.name}"
@@ -93,6 +108,7 @@ class Section(models.Model):
 
     class Meta:
         unique_together = ("department", "semester", "name")
+        ordering = ['department__code', 'semester', 'name']
 
     def __str__(self):
         return f"{self.department.code}-{self.semester}-{self.name}"

@@ -35,9 +35,9 @@ apiClient.interceptors.response.use(
   (error) => {
     // Handle common HTTP errors
     if (error.response?.status === 401) {
-      // Unauthorized - redirect to login
+      // Unauthorized - clear token but don't redirect for now
       localStorage.removeItem("authToken")
-      window.location.href = "/login"
+      console.warn("Authentication required - token cleared")
     } else if (error.response?.status === 403) {
       // Forbidden - show error message
       console.error("Access forbidden")

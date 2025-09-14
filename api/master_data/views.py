@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.db import transaction
 import pandas as pd
 
@@ -19,7 +19,7 @@ from .serializers import (
 class DepartmentViewSet(viewsets.ModelViewSet):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_fields = ["name", "code"]
     search_fields = ["name", "code"]
     ordering_fields = ["name", "code"]
@@ -28,7 +28,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
 class RoomViewSet(viewsets.ModelViewSet):
     queryset = Room.objects.all()
     serializer_class = RoomSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_fields = ["room_type", "capacity"]
     search_fields = ["number"]
     ordering_fields = ["capacity", "number"]
@@ -37,7 +37,7 @@ class RoomViewSet(viewsets.ModelViewSet):
 class SubjectViewSet(viewsets.ModelViewSet):
     queryset = Subject.objects.all()
     serializer_class = SubjectSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_fields = ["category", "departments"]
     search_fields = ["name", "code"]
     ordering_fields = ["code", "name"]
@@ -46,7 +46,7 @@ class SubjectViewSet(viewsets.ModelViewSet):
 class FacultyViewSet(viewsets.ModelViewSet):
     queryset = Faculty.objects.select_related("department").all()
     serializer_class = FacultySerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_fields = ["department", "experience_years"]
     search_fields = ["first_name", "last_name", "email"]
     ordering_fields = ["experience_years", "last_name"]
@@ -90,7 +90,7 @@ class FacultyViewSet(viewsets.ModelViewSet):
 class StudentViewSet(viewsets.ModelViewSet):
     queryset = Student.objects.select_related("department").all()
     serializer_class = StudentSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_fields = ["department", "current_semester"]
     search_fields = ["first_name", "last_name", "email", "enrollment_no"]
     ordering_fields = ["enrollment_no", "last_name"]
@@ -133,7 +133,7 @@ class StudentViewSet(viewsets.ModelViewSet):
 class SectionViewSet(viewsets.ModelViewSet):
     queryset = Section.objects.select_related("department").all()
     serializer_class = SectionSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
     filterset_fields = ["department", "semester", "name"]
     search_fields = ["name", "semester"]
     ordering_fields = ["name", "size"]
