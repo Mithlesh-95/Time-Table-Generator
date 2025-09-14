@@ -7,7 +7,7 @@
     "dev": "next dev",
     "lint": "next lint",
     "start": "next start",
-    "dev:backend": "cd ../../api && D:/SIH/Time-Table-Generator/api/.venv/Scripts/python.exe manage.py runserver 0.0.0.0:8000",
+    "dev:backend": "cd ../../api && D:/SIH/Time-Table-Generator/api/.venv/Scripts/python.exe manage.py migrate && D:/SIH/Time-Table-Generator/api/.venv/Scripts/python.exe manage.py runserver 0.0.0.0:8000",
     "dev:fullstack": "concurrently \"npm run dev:backend\" \"npm run dev\" --names \"DJANGO,NEXTJS\" --prefix-colors \"blue,green\"",
     "start:fullstack": "concurrently \"npm run dev:backend\" \"npm run start\" --names \"DJANGO,NEXTJS\" --prefix-colors \"blue,green\""
   },

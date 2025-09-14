@@ -1,6 +1,6 @@
 "use client"
 
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useRef } from "react"
 import { ThemeProvider, createTheme } from "@mui/material/styles"
 import {
     CssBaseline,
@@ -71,6 +71,19 @@ export default function MasterDataPage() {
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState<string | null>(null)
     const [tabValue, setTabValue] = useState(0)
+    const hasLoadedRef = useRef(false)
+
+    // Individual loading states for better UX
+    const [loadingStates, setLoadingStates] = useState({
+        departments: false,
+        rooms: false,
+        faculty: false,
+        students: false,
+        subjects: false,
+        sections: false,
+        bulkUpload: false,
+        initialLoad: true
+    })
 
     const [departments, setDepartments] = useState<Department[]>([])
     const [faculty, setFaculty] = useState<Faculty[]>([])
@@ -90,6 +103,7 @@ export default function MasterDataPage() {
     const deptOptions = useMemo(() => departments.map(d => ({ value: d.id!, label: `${d.code} - ${d.name}` })), [departments])
 
     const refreshAll = async () => {
+        setLoadingStates(prev => ({ ...prev, initialLoad: true }))
         setLoading(true); setError(null)
         try {
             const [d, f, s, r, sub, sec] = await Promise.all([
@@ -110,97 +124,147 @@ export default function MasterDataPage() {
             setError(e?.message ?? "Failed to load master data")
         } finally {
             setLoading(false)
+            setLoadingStates(prev => ({ ...prev, initialLoad: false }))
         }
     }
 
-    useEffect(() => { refreshAll() }, [])
+    // Selective refresh functions for better performance
+    const refreshDepartments = async () => {
+        const res = await masterDataApi.listDepartments()
+        if (res.success) setDepartments(res.data)
+    }
+
+    const refreshRooms = async () => {
+        const res = await masterDataApi.listRooms()
+        if (res.success) setRooms(res.data)
+    }
+
+    const refreshFaculty = async () => {
+        const res = await masterDataApi.listFaculty()
+        if (res.success) setFaculty(res.data)
+    }
+
+    const refreshStudents = async () => {
+        const res = await masterDataApi.listStudents()
+        if (res.success) setStudents(res.data)
+    }
+
+    const refreshSubjects = async () => {
+        const res = await masterDataApi.listSubjects()
+        if (res.success) setSubjects(res.data)
+    }
+
+    const refreshSections = async () => {
+        const res = await masterDataApi.listSections()
+        if (res.success) setSections(res.data)
+    }
+
+    useEffect(() => {
+        if (!hasLoadedRef.current) {
+            hasLoadedRef.current = true
+            refreshAll()
+        }
+    }, [])
 
     // Handlers
     const onCreateDepartment = async () => {
         if (!deptForm.name || !deptForm.code) return
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, departments: true }))
         try {
             const res = await masterDataApi.createDepartment(deptForm)
             if (res.success) {
                 setDeptForm({ name: "", code: "" })
-                refreshAll()
+                refreshDepartments()
             }
-        } catch (e: any) { setError(e?.message ?? "Failed to create department") } finally { setLoading(false) }
+        } catch (e: any) { setError(e?.message ?? "Failed to create department") } finally { 
+            setLoadingStates(prev => ({ ...prev, departments: false }))
+        }
     }
 
     const onCreateRoom = async () => {
         if (!roomForm.number || !roomForm.capacity) return
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, rooms: true }))
         try {
             const res = await masterDataApi.createRoom(roomForm)
             if (res.success) {
                 setRoomForm({ number: "", room_type: "lecture", capacity: 40 })
-                refreshAll()
+                refreshRooms()
             }
-        } catch (e: any) { setError(e?.message ?? "Failed to create room") } finally { setLoading(false) }
+        } catch (e: any) { setError(e?.message ?? "Failed to create room") } finally { 
+            setLoadingStates(prev => ({ ...prev, rooms: false }))
+        }
     }
 
     const onCreateFaculty = async () => {
         if (!facultyForm.first_name || !facultyForm.email || !facultyForm.department_id) return
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, faculty: true }))
         try {
             const res = await masterDataApi.createFaculty(facultyForm)
             if (res.success) {
                 setFacultyForm({ first_name: "", last_name: "", email: "", department_id: 0 })
-                refreshAll()
+                refreshFaculty()
             }
-        } catch (e: any) { setError(e?.message ?? "Failed to create faculty") } finally { setLoading(false) }
+        } catch (e: any) { setError(e?.message ?? "Failed to create faculty") } finally { 
+            setLoadingStates(prev => ({ ...prev, faculty: false }))
+        }
     }
 
     const onCreateStudent = async () => {
         if (!studentForm.first_name || !studentForm.email || !studentForm.department_id || !studentForm.enrollment_no) return
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, students: true }))
         try {
             const res = await masterDataApi.createStudent(studentForm)
             if (res.success) {
                 setStudentForm({ first_name: "", last_name: "", email: "", enrollment_no: "", department_id: 0, current_semester: "Sem-1" })
-                refreshAll()
+                refreshStudents()
             }
-        } catch (e: any) { setError(e?.message ?? "Failed to create student") } finally { setLoading(false) }
+        } catch (e: any) { setError(e?.message ?? "Failed to create student") } finally { 
+            setLoadingStates(prev => ({ ...prev, students: false }))
+        }
     }
 
     const onCreateSubject = async () => {
         if (!subjectForm.code || !subjectForm.name) return
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, subjects: true }))
         try {
             const res = await masterDataApi.createSubject(subjectForm)
             if (res.success) {
                 setSubjectForm({ code: "", name: "", category: "Major", credits_theory: 3, credits_practical: 0 })
-                refreshAll()
+                refreshSubjects()
             }
-        } catch (e: any) { setError(e?.message ?? "Failed to create subject") } finally { setLoading(false) }
+        } catch (e: any) { setError(e?.message ?? "Failed to create subject") } finally { 
+            setLoadingStates(prev => ({ ...prev, subjects: false }))
+        }
     }
 
     const onCreateSection = async () => {
         if (!sectionForm.department_id || !sectionForm.name) return
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, sections: true }))
         try {
             const res = await masterDataApi.createSection(sectionForm)
             if (res.success) {
                 setSectionForm({ department_id: 0, semester: "Sem-1", name: "A", size: 60 })
-                refreshAll()
+                refreshSections()
             }
-        } catch (e: any) { setError(e?.message ?? "Failed to create section") } finally { setLoading(false) }
+        } catch (e: any) { setError(e?.message ?? "Failed to create section") } finally { 
+            setLoadingStates(prev => ({ ...prev, sections: false }))
+        }
     }
 
     const handleBulkUpload = async (file: File, type: 'faculty' | 'students') => {
-        setLoading(true)
+        setLoadingStates(prev => ({ ...prev, bulkUpload: true }))
         try {
             if (type === 'faculty') {
                 await masterDataApi.bulkUploadFaculty(file)
+                await refreshFaculty()
             } else {
                 await masterDataApi.bulkUploadStudents(file)
+                await refreshStudents()
             }
-            await refreshAll()
         } catch (e: any) {
             setError(e?.message ?? `Failed to upload ${type}`)
         } finally {
-            setLoading(false)
+            setLoadingStates(prev => ({ ...prev, bulkUpload: false }))
         }
     }
 
@@ -219,6 +283,31 @@ export default function MasterDataPage() {
                     </Typography>
 
                     {error && <Alert severity="error" sx={{ mb: 3 }}>{error}</Alert>}
+                    
+                    {/* Initial Loading Overlay */}
+                    {loadingStates.initialLoad && (
+                        <Box 
+                            sx={{ 
+                                display: 'flex', 
+                                flexDirection: 'column',
+                                alignItems: 'center', 
+                                justifyContent: 'center', 
+                                minHeight: 400,
+                                gap: 2 
+                            }}
+                        >
+                            <CircularProgress size={60} thickness={4} />
+                            <Typography variant="h6" color="text.secondary">
+                                Loading Master Data...
+                            </Typography>
+                            <Typography variant="body2" color="text.secondary">
+                                Please wait while we fetch departments, faculty, students, and other data.
+                            </Typography>
+                        </Box>
+                    )}
+
+                    {/* Main Content - only show when not loading initially */}
+                    {!loadingStates.initialLoad && (
 
                     <Paper sx={{ width: '100%' }}>
                         <Tabs
@@ -261,11 +350,11 @@ export default function MasterDataPage() {
                                     <CardActions>
                                         <Button
                                             variant="contained"
-                                            startIcon={<AddIcon />}
+                                            startIcon={loadingStates.departments ? <CircularProgress size={20} /> : <AddIcon />}
                                             onClick={onCreateDepartment}
-                                            disabled={loading}
+                                            disabled={loadingStates.departments}
                                         >
-                                            Add Department
+                                            {loadingStates.departments ? 'Adding...' : 'Add Department'}
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -274,16 +363,30 @@ export default function MasterDataPage() {
                                         <Typography variant="h6" gutterBottom>
                                             Existing Departments ({departments.length})
                                         </Typography>
-                                        <List dense>
-                                            {departments.map((dept) => (
-                                                <ListItem key={dept.id}>
-                                                    <ListItemText
-                                                        primary={`${dept.code} - ${dept.name}`}
-                                                        secondary={`ID: ${dept.id}`}
-                                                    />
-                                                </ListItem>
-                                            ))}
-                                        </List>
+                                        {loadingStates.initialLoad ? (
+                                            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, p: 2 }}>
+                                                <CircularProgress size={20} />
+                                                <Typography variant="body2" color="text.secondary">
+                                                    Loading departments...
+                                                </Typography>
+                                            </Box>
+                                        ) : (
+                                            <List dense>
+                                                {departments.map((dept) => (
+                                                    <ListItem key={dept.id}>
+                                                        <ListItemText
+                                                            primary={`${dept.code} - ${dept.name}`}
+                                                            secondary={`ID: ${dept.id}`}
+                                                        />
+                                                    </ListItem>
+                                                ))}
+                                                {departments.length === 0 && (
+                                                    <Typography variant="body2" color="text.secondary" sx={{ p: 2 }}>
+                                                        No departments found. Add one to get started.
+                                                    </Typography>
+                                                )}
+                                            </List>
+                                        )}
                                     </CardContent>
                                 </Card>
                             </Box>
@@ -326,11 +429,11 @@ export default function MasterDataPage() {
                                     <CardActions>
                                         <Button
                                             variant="contained"
-                                            startIcon={<AddIcon />}
+                                            startIcon={loadingStates.rooms ? <CircularProgress size={20} /> : <AddIcon />}
                                             onClick={onCreateRoom}
-                                            disabled={loading}
+                                            disabled={loadingStates.rooms}
                                         >
-                                            Add Room
+                                            {loadingStates.rooms ? 'Adding...' : 'Add Room'}
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -399,11 +502,11 @@ export default function MasterDataPage() {
                                     <CardActions>
                                         <Button
                                             variant="contained"
-                                            startIcon={<AddIcon />}
+                                            startIcon={loadingStates.faculty ? <CircularProgress size={20} /> : <AddIcon />}
                                             onClick={onCreateFaculty}
-                                            disabled={loading}
+                                            disabled={loadingStates.faculty}
                                         >
-                                            Add Faculty
+                                            {loadingStates.faculty ? 'Adding...' : 'Add Faculty'}
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -486,11 +589,11 @@ export default function MasterDataPage() {
                                     <CardActions>
                                         <Button
                                             variant="contained"
-                                            startIcon={<AddIcon />}
+                                            startIcon={loadingStates.students ? <CircularProgress size={20} /> : <AddIcon />}
                                             onClick={onCreateStudent}
-                                            disabled={loading}
+                                            disabled={loadingStates.students}
                                         >
-                                            Add Student
+                                            {loadingStates.students ? 'Adding...' : 'Add Student'}
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -568,11 +671,11 @@ export default function MasterDataPage() {
                                     <CardActions>
                                         <Button
                                             variant="contained"
-                                            startIcon={<AddIcon />}
+                                            startIcon={loadingStates.subjects ? <CircularProgress size={20} /> : <AddIcon />}
                                             onClick={onCreateSubject}
-                                            disabled={loading}
+                                            disabled={loadingStates.subjects}
                                         >
-                                            Add Subject
+                                            {loadingStates.subjects ? 'Adding...' : 'Add Subject'}
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -641,11 +744,11 @@ export default function MasterDataPage() {
                                     <CardActions>
                                         <Button
                                             variant="contained"
-                                            startIcon={<AddIcon />}
+                                            startIcon={loadingStates.sections ? <CircularProgress size={20} /> : <AddIcon />}
                                             onClick={onCreateSection}
-                                            disabled={loading}
+                                            disabled={loadingStates.sections}
                                         >
-                                            Add Section
+                                            {loadingStates.sections ? 'Adding...' : 'Add Section'}
                                         </Button>
                                     </CardActions>
                                 </Card>
@@ -734,6 +837,7 @@ export default function MasterDataPage() {
                         </TabPanel>
 
                     </Paper>
+                    )} {/* Close the !loadingStates.initialLoad conditional */}
                 </Box>
             </Box>
         </ThemeProvider>
