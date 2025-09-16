@@ -65,9 +65,9 @@ DB_URL = os.environ.get(
     f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
 )
 
-# Use SQLite during build if DATABASE_URL is not accessible
-if os.environ.get('RENDER'):
-    # Production database configuration
+# Special handling for build time - use SQLite if postgres driver fails
+try:
+    import psycopg2
     DATABASES = {
         "default": dj_database_url.parse(
             DB_URL,
@@ -79,13 +79,14 @@ if os.environ.get('RENDER'):
     if DB_URL.startswith("postgres"):
         DATABASES["default"].setdefault("OPTIONS", {})
         DATABASES["default"]["OPTIONS"].setdefault("sslmode", "require")
-else:
-    # Local development or build fallback
+        
+except ImportError:
+    # Fallback to SQLite if psycopg2 not available during build
     DATABASES = {
-        "default": dj_database_url.parse(
-            DB_URL,
-            conn_max_age=600,
-        )
+        "default": {
+            "ENGINE": "django.db.backends.sqlite3",
+            "NAME": BASE_DIR / "db.sqlite3",
+        }
     }
 
 AUTH_PASSWORD_VALIDATORS = [
