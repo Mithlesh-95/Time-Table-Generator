@@ -59,35 +59,23 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ttg.wsgi.application"
 
-# Database URL with SQLite fallback for local dev
+# Database configuration for PostgreSQL
 DB_URL = os.environ.get(
     "DATABASE_URL",
     f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
 )
 
-# Special handling for build time - use SQLite if postgres driver fails
-try:
-    import psycopg2
-    DATABASES = {
-        "default": dj_database_url.parse(
-            DB_URL,
-            conn_max_age=600,
-        )
-    }
-    
-    # Enforce SSL in hosted Postgres
-    if DB_URL.startswith("postgres"):
-        DATABASES["default"].setdefault("OPTIONS", {})
-        DATABASES["default"]["OPTIONS"].setdefault("sslmode", "require")
-        
-except ImportError:
-    # Fallback to SQLite if psycopg2 not available during build
-    DATABASES = {
-        "default": {
-            "ENGINE": "django.db.backends.sqlite3",
-            "NAME": BASE_DIR / "db.sqlite3",
-        }
-    }
+DATABASES = {
+    "default": dj_database_url.parse(
+        DB_URL,
+        conn_max_age=600,
+    )
+}
+
+# Enforce SSL in hosted Postgres
+if DB_URL.startswith("postgres"):
+    DATABASES["default"].setdefault("OPTIONS", {})
+    DATABASES["default"]["OPTIONS"].setdefault("sslmode", "require")
 
 AUTH_PASSWORD_VALIDATORS = [
     {"NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator"},
