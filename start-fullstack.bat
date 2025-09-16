@@ -4,7 +4,7 @@ echo.
 
 REM Start Django Backend
 echo Starting Django Backend...
-start /B "Django Backend" cmd /c "cd /d D:\SIH\Time-Table-Generator\api && D:\SIH\Time-Table-Generator\api\.venv\Scripts\python.exe manage.py runserver 0.0.0.0:8000"
+start /B "Django Backend" cmd /c "cd /d D:\SIH\Time-Table-Generator\api && C:/Users/mithl/AppData/Local/Microsoft/WindowsApps/python3.11.exe manage.py runserver 0.0.0.0:8000"
 
 REM Wait a moment for backend to start
 timeout /t 3 /nobreak > nul
