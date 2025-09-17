@@ -1,17 +1,47 @@
 from rest_framework import serializers
-from .models import Department, Faculty, Room, Student, Subject, Section, Expertise
+from .models import Department, Faculty, Room, Student, Subject, Section, Expertise, College
+
+
+class CollegeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = College
+        fields = "__all__"
 
 
 class DepartmentSerializer(serializers.ModelSerializer):
+    college = CollegeSerializer(read_only=True)
+    college_id = serializers.PrimaryKeyRelatedField(
+        queryset=College.objects.all(), source="college", write_only=True, required=False, allow_null=True
+    )
     class Meta:
         model = Department
-        fields = "__all__"
+        fields = [
+            "id",
+            "name",
+            "code",
+            "college",
+            "college_id",
+        ]
 
 
 class RoomSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+    department_id = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.all(), source="department", write_only=True, required=False, allow_null=True
+    )
+
     class Meta:
         model = Room
-        fields = "__all__"
+        fields = [
+            "id",
+            "number",
+            "room_type",
+            "capacity",
+            "equipment",
+            "constraints",
+            "department",
+            "department_id",
+        ]
 
 
 class SubjectSerializer(serializers.ModelSerializer):

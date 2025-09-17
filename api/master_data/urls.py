@@ -2,9 +2,10 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import DepartmentViewSet, FacultyViewSet, RoomViewSet, StudentViewSet, SubjectViewSet, SectionViewSet
+from .views import CollegeViewSet, DepartmentViewSet, FacultyViewSet, RoomViewSet, StudentViewSet, SubjectViewSet, SectionViewSet
 
 router = DefaultRouter()
+router.register(r"colleges", CollegeViewSet)
 router.register(r"departments", DepartmentViewSet)
 router.register(r"faculties", FacultyViewSet)
 router.register(r"rooms", RoomViewSet)

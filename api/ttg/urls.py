@@ -5,4 +5,5 @@ from django.conf import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path(settings.API_PREFIX.strip("/") + "/", include("master_data.urls")),
+    path(settings.API_PREFIX.strip("/") + "/", include("accounts.urls")),
 ]
