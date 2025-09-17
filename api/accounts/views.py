@@ -25,3 +25,14 @@ class MeView(APIView):
 
     def get(self, request):
         return Response(MeSerializer(request.user).data)
+
+
+class EmailExistsView(APIView):
+    permission_classes = [permissions.AllowAny]
+
+    def get(self, request):
+        email = request.query_params.get("email", "").strip()
+        if not email:
+            return Response({"detail": "email is required"}, status=status.HTTP_400_BAD_REQUEST)
+        exists = User.objects.filter(username=email).exists() or User.objects.filter(email=email).exists()
+        return Response({"exists": exists})
