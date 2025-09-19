@@ -1,13 +1,11 @@
 @echo off
 setlocal ENABLEDELAYEDEXPANSION
 
-REM Change to the login-module directory inside the repo
-pushd "%~dp0login-module"
-
-echo Starting static server at http://127.0.0.1:5500 ...
-start "Frontend Server" cmd /c "python -m http.server 5500"
-
+REM Start Next.js dev server for basic_ui on http://localhost:3000
+pushd "%~dp0basic_ui"
+echo Installing Node dependencies (if needed) and starting Next.js dev server at http://localhost:3000 ...
+start "Next Dev Server" cmd /c "call npm install && npm run dev"
 popd
 
-echo Frontend server launched. You can close this window.
+echo Frontend launched at http://localhost:3000 . Open /login/index.html to sign in.
 exit /b 0

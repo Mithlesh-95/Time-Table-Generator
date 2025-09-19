@@ -12,9 +12,9 @@ const toastEl = document.getElementById("toast")
 function resolveApiBases() {
   const bases = []
   try {
-    const origin = window.location.origin // e.g., http://127.0.0.1:5500
-    // Map common dev ports
-    const mapped = origin.replace(/:(\d+)$/, (m, p) => `:${p === "5500" ? "8000" : p}`)
+    const origin = window.location.origin // e.g., http://localhost:3000
+    // Map Next.js dev port 3000 to Django 8000
+    const mapped = origin.replace(/:(\d+)$/, (m, p) => `:${p === "3000" ? "8000" : p}`)
     bases.push(`${mapped}/api`)
   } catch (_) {}
   bases.push("http://127.0.0.1:8000/api")
@@ -349,7 +349,7 @@ loginForm.addEventListener("submit", async (e) => {
       method: "POST",
       body: JSON.stringify({ username: email, password }),
     })
-    // Store tokens
+    // Store tokens on same origin
     localStorage.setItem("access_token", tokenData.access)
     localStorage.setItem("refresh_token", tokenData.refresh)
 
@@ -361,10 +361,8 @@ loginForm.addEventListener("submit", async (e) => {
       console.log("Logged in user:", me)
     } catch (_) {}
 
-    // Redirect to Next.js dashboard and pass tokens via URL hash for cross-origin storage
-    const dashUrl = new URL("http://localhost:3000/dashboard")
-    dashUrl.hash = `access=${encodeURIComponent(tokenData.access)}&refresh=${encodeURIComponent(tokenData.refresh)}`
-    window.location.href = dashUrl.toString()
+    // Redirect to Next.js dashboard (same origin)
+    window.location.href = "/dashboard"
   } catch (err) {
     // Immediate feedback
     showToast("Login failed. Check email/password.")
@@ -384,9 +382,6 @@ loginForm.addEventListener("submit", async (e) => {
             if (pwd) pwd.focus()
           },
           secondaryText: "Forgot Password?",
-          onSecondary: () => {
-            // placeholder for future forgot password flow
-          },
         })
         // Inline mark and toast
         showError("loginPassword", "loginPasswordError", "Invalid password. Please try again.")
