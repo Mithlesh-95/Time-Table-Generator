@@ -1,180 +1,79 @@
+import { api } from "../api"
 import type { ApiResponse, PaginatedResponse } from "../api"
 import type { TimetableData } from "@/types/timetable"
 
+// Request aligned with GeneratorInputForm and backend generation payload
 export interface TimetableGenerationRequest {
-  academicYear: string
+  academic_year: string
+  year: number
   semester: string
-  branch: string
-  section: string
-  startDate: string
-  endDate: string
-  workingDays: string[]
-  periodsPerDay: number
-  periodDuration: number
-  constraints?: any[]
+  department_id: number
+  section_letter: 'A'|'B'|'C'|'D'|'E'|'F'
+  working_days: string[]
+  periods_per_day: number
 }
 
 export interface TimetableGenerationResponse {
-  id: string
-  status: "pending" | "processing" | "completed" | "failed"
-  progress: number
-  message?: string
-  timetableData?: TimetableData
+  jobId: string
 }
 
-// Timetable API endpoints
+export interface TimetableGenerationStatus {
+  jobId: string
+  step: "input_validation" | "generation" | "conflict_check" | "success" | "failed"
+  progress: number
+  conflicts?: Array<{ id: string; type: string; message: string; suggestedFix?: string }>
+  result?: TimetableData
+  error?: string
+}
+
+export interface TimetableEntity {
+  id: number
+  department_id: number
+  section_letter: string
+  year: number
+  semester: string
+  academic_year: string
+  data: TimetableData
+  created_at: string
+}
+
 export const timetableApi = {
-  // Generate new timetable
-  generateTimetable: async (request: TimetableGenerationRequest): Promise<ApiResponse<TimetableGenerationResponse>> => {
-    // Placeholder implementation - replace with actual API call
-    console.log("API Call: Generate Timetable", request)
+  // Start generation job
+  generateTimetable: (request: TimetableGenerationRequest): Promise<ApiResponse<TimetableGenerationResponse>> =>
+    api.post<TimetableGenerationResponse>("/timetable/generate/start", request),
 
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: {
-            id: `tt_${Date.now()}`,
-            status: "processing",
-            progress: 0,
-            message: "Timetable generation started",
-          },
-        })
-      }, 1000)
-    })
+  // Poll job status
+  getGenerationStatus: (jobId: string): Promise<ApiResponse<TimetableGenerationStatus>> =>
+    api.get<TimetableGenerationStatus>(`/timetable/generate/status/${jobId}`),
 
-    // Actual API call would be:
-    // return api.post('/timetables/generate', request)
-  },
+  // Cancel a running generation job (if supported by backend)
+  cancelGeneration: (jobId: string): Promise<ApiResponse<{ canceled: boolean }>> =>
+    api.post<{ canceled: boolean }>(`/timetable/generate/cancel/${jobId}`),
 
-  // Get timetable generation status
-  getGenerationStatus: async (id: string): Promise<ApiResponse<TimetableGenerationResponse>> => {
-    console.log("API Call: Get Generation Status", id)
+  // Persist a generated timetable entity
+  saveTimetable: (payload: Omit<TimetableEntity, "id" | "created_at">): Promise<ApiResponse<TimetableEntity>> =>
+    api.post<TimetableEntity>("/timetables/", payload),
 
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: {
-            id,
-            status: "completed",
-            progress: 100,
-            message: "Timetable generation completed successfully",
-          },
-        })
-      }, 500)
-    })
-
-    // return api.get(`/timetables/generate/${id}/status`)
-  },
-
-  // Get all timetables
-  getTimetables: async (params?: {
+  // List timetables
+  getTimetables: (params?: {
+    department_id?: number
+    section_letter?: string
+    year?: number
     semester?: string
-    branch?: string
-    section?: string
+    academic_year?: string
     page?: number
     limit?: number
-  }): Promise<PaginatedResponse<TimetableData>> => {
-    console.log("API Call: Get Timetables", params)
+  }): Promise<ApiResponse<PaginatedResponse<TimetableEntity>>> => api.get<PaginatedResponse<TimetableEntity>>("/timetables/", params),
 
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: [], // Would contain actual timetable data
-          pagination: {
-            page: params?.page || 1,
-            limit: params?.limit || 10,
-            total: 0,
-            totalPages: 0,
-          },
-        })
-      }, 500)
-    })
+  // Get a specific timetable entity by id
+  getTimetable: (id: number): Promise<ApiResponse<TimetableEntity>> =>
+    api.get<TimetableEntity>(`/timetables/${id}/`),
 
-    // return api.get('/timetables', params)
-  },
-
-  // Get specific timetable
-  getTimetable: async (id: string): Promise<ApiResponse<TimetableData>> => {
-    console.log("API Call: Get Timetable", id)
-
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: {
-            schedule: {},
-            metadata: {
-              semester: "5",
-              branch: "Computer Science",
-              section: "A",
-              academicYear: "2024-25",
-            },
-          },
-        })
-      }, 500)
-    })
-
-    // return api.get(`/timetables/${id}`)
-  },
-
-  // Update timetable
-  updateTimetable: async (id: string, data: Partial<TimetableData>): Promise<ApiResponse<TimetableData>> => {
-    console.log("API Call: Update Timetable", id, data)
-
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: data as TimetableData,
-          message: "Timetable updated successfully",
-        })
-      }, 500)
-    })
-
-    // return api.put(`/timetables/${id}`, data)
-  },
+  // Update a timetable entity
+  updateTimetable: (id: number, data: Partial<TimetableEntity>): Promise<ApiResponse<TimetableEntity>> =>
+    api.patch<TimetableEntity>(`/timetables/${id}/`, data),
 
   // Delete timetable
-  deleteTimetable: async (id: string): Promise<ApiResponse<void>> => {
-    console.log("API Call: Delete Timetable", id)
-
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: undefined,
-          message: "Timetable deleted successfully",
-        })
-      }, 500)
-    })
-
-    // return api.delete(`/timetables/${id}`)
-  },
-
-  // Save configuration
-  saveConfiguration: async (config: any): Promise<ApiResponse<void>> => {
-    console.log("API Call: Save Configuration", config)
-
-    // Simulate API response
-    return new Promise((resolve) => {
-      setTimeout(() => {
-        resolve({
-          success: true,
-          data: undefined,
-          message: "Configuration saved successfully",
-        })
-      }, 500)
-    })
-
-    // return api.post('/configurations', config)
-  },
+  deleteTimetable: (id: number): Promise<ApiResponse<void>> =>
+    api.delete<void>(`/timetables/${id}/`),
 }

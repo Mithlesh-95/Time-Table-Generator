@@ -3,6 +3,11 @@ export interface TimetableEntry {
   teacher: string
   room: string
   type: "lecture" | "tutorial" | "practical" | "lab" | "break" | "free"
+  // optional richer metadata if backend provides it
+  subjectCode?: string
+  subjectFullName?: string
+  teacherShort?: string
+  teacherFull?: string
 }
 
 export interface TimetableSchedule {

@@ -85,7 +85,14 @@ export default function Navigation() {
 
   return (
     <>
-      <AppBar position="static">
+      <AppBar
+        position="static"
+        sx={{
+          background: "linear-gradient(135deg, rgba(0,188,212,0.95) 0%, rgba(156,39,176,0.95) 100%)",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.12)",
+          backdropFilter: "saturate(120%) blur(4px)",
+        }}
+      >
         <Toolbar>
           {isMobile && (
             <IconButton

@@ -2,7 +2,7 @@ from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 
-from .views import CollegeViewSet, DepartmentViewSet, FacultyViewSet, RoomViewSet, StudentViewSet, SubjectViewSet, SectionViewSet
+from .views import CollegeViewSet, DepartmentViewSet, FacultyViewSet, RoomViewSet, StudentViewSet, SubjectViewSet, SectionViewSet, TimetableViewSet
 
 router = DefaultRouter()
 router.register(r"colleges", CollegeViewSet)
@@ -12,6 +12,7 @@ router.register(r"rooms", RoomViewSet)
 router.register(r"students", StudentViewSet)
 router.register(r"subjects", SubjectViewSet)
 router.register(r"sections", SectionViewSet)
+router.register(r"timetables", TimetableViewSet)
 
 urlpatterns = [
     path("auth/token/", TokenObtainPairView.as_view(), name="token_obtain_pair"),

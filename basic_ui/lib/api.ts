@@ -1,4 +1,5 @@
 import axios from "axios"
+import { parseJwt, setCollegeCode, getCollegeCode } from "@/lib/college"
 
 // API Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8000/api"
@@ -6,7 +7,7 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://127.0.0.1:8
 // Create axios instance with default configuration
 export const apiClient = axios.create({
   baseURL: API_BASE_URL,
-  timeout: 10000,
+  timeout: 30000,
   headers: {
     "Content-Type": "application/json",
   },
@@ -20,6 +21,18 @@ apiClient.interceptors.request.use(
       const token = localStorage.getItem("access_token")
       if (token) {
         ;(config.headers = config.headers || {}).Authorization = `Bearer ${token}`
+        // Sync college_code from token claim if available and differs
+        try {
+          const payload = parseJwt(token)
+          let claim: any = payload?.college_code || payload?.college || payload?.user?.college_code
+          if (claim && typeof claim === 'object' && typeof claim.code === 'string') claim = claim.code
+          if (typeof claim === 'string') {
+            const code = claim.trim()
+            if (code && getCollegeCode() !== code) {
+              setCollegeCode(code)
+            }
+          }
+        } catch {}
       }
     }
     return config
@@ -90,9 +103,18 @@ export const api = {
 
 // Timetable Generation APIs
 export interface GenerationStartPayload {
+  // legacy fields (still accepted by API if present)
   program?: string
   semester?: string
   sections?: string[]
+  // new structured payload
+  academic_year?: string
+  year?: number
+  section_id?: number
+  department_id?: number
+  section_letter?: 'A'|'B'|'C'|'D'|'E'|'F'
+  working_days?: string[]
+  periods_per_day?: number
   constraints?: Record<string, any>
 }
 

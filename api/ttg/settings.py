@@ -26,6 +26,7 @@ INSTALLED_APPS = [
     # Local apps
     "accounts",
     "master_data",
+    "generator",
 ]
 
 MIDDLEWARE = [

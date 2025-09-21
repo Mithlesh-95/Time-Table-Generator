@@ -1,27 +1,167 @@
 "use client"
 
-import { ThemeProvider, createTheme } from "@mui/material/styles"
-import CssBaseline from "@mui/material/CssBaseline"
-import { Box, Typography, Button } from "@mui/material"
-import Navigation from "@/components/Navigation"
-
-const theme = createTheme({
-  palette: { primary: { main: "#1976d2" }, secondary: { main: "#dc004e" } },
-})
+import { Box, Typography, Button, Stack, TextField, Paper, Table, TableHead, TableRow, TableCell, TableBody, IconButton, Menu, MenuItem, Dialog, DialogTitle, DialogContent, DialogActions, Snackbar, Alert } from "@mui/material"
+import DashboardLayout from "@/components/layout/DashboardLayout"
+import MoreVertIcon from "@mui/icons-material/MoreVert"
+import { useEffect, useMemo, useState } from "react"
+import { api } from "@/lib/api"
+import BulkUploadDialog from "@/components/BulkUploadDialog"
+import AddOneDialog, { type FieldDef } from "@/components/AddOneDialog"
+import { getCollegeCode, subscribeCollegeCode } from "@/lib/college"
+import LoadingOverlay from "@/components/LoadingOverlay"
 
 export default function CoursesPage() {
+  const [collegeCode, setCollegeCode] = useState<string>(getCollegeCode())
+  const [rows, setRows] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [q, setQ] = useState("")
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null)
+  const [current, setCurrent] = useState<any | null>(null)
+  const [confirmOpen, setConfirmOpen] = useState(false)
+  const [bulkOpen, setBulkOpen] = useState(false)
+  const [addOpen, setAddOpen] = useState(false)
+  const [toast, setToast] = useState<{open:boolean; msg:string; type:'success'|'error'}>({open:false,msg:'',type:'success'})
+
+  const openMenu = Boolean(anchorEl)
+  const handleMenu = (e: React.MouseEvent<HTMLButtonElement>, row: any) => {
+    setAnchorEl(e.currentTarget)
+    setCurrent(row)
+  }
+
+  const addFields: FieldDef[] = [
+    { name: 'code', label: 'Code' },
+    { name: 'name', label: 'Name' },
+    { name: 'category', label: 'Type (core/elective/lab)' },
+    { name: 'credits_theory', label: 'Theory Credits', type: 'number' },
+    { name: 'credits_practical', label: 'Practical Credits', type: 'number' },
+  ]
+
+  const onAddOne = async (values: Record<string, any>) => {
+    await api.post('/subjects/', values)
+    await fetchRows()
+  }
+  const closeMenu = () => setAnchorEl(null)
+
+  const fetchRows = async () => {
+    try {
+      setLoading(true)
+      if (!collegeCode) { setRows([]); return }
+      const res = await api.get<any>("/subjects/", { 'departments__college__code': collegeCode })
+      const data = Array.isArray((res as any).data) ? (res as any).data : ((res as any).data?.results ?? [])
+      setRows(data)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => { fetchRows() }, [collegeCode])
+
+  useEffect(() => {
+    const unsub = subscribeCollegeCode((code) => setCollegeCode(code))
+    return () => unsub()
+  }, [])
+
+  const filtered = useMemo(() => {
+    if (!q) return rows
+    const term = q.toLowerCase()
+    return rows.filter((r: any) => `${r.code ?? ''} ${r.name ?? ''} ${r.category ?? ''}`.toLowerCase().includes(term))
+  }, [rows, q])
+
+  const onDelete = async () => {
+    if (!current) return
+    try {
+      await api.delete(`/subjects/${current.id}/`)
+      setConfirmOpen(false)
+      setCurrent(null)
+      await fetchRows()
+    } catch (_) {
+      setConfirmOpen(false)
+    }
+  }
+
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Box sx={{ display: "flex", flexDirection: "column", minHeight: "100vh" }}>
-        <Navigation />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
-          <Typography variant="h5" gutterBottom>
-            Manage Courses
-          </Typography>
-          <Button variant="contained">Add Course</Button>
-        </Box>
-      </Box>
-    </ThemeProvider>
+    <DashboardLayout title="Course Management" subtitle="Manage curriculum courses and electives.">
+      <LoadingOverlay show={loading} message="Loading Courses" />
+      <Stack direction={{ xs: "column", md: "row" }} spacing={2} sx={{ mb: 2 }} alignItems={{ md: "center" }}>
+        <TextField size="small" placeholder="Search by name or code..." sx={{ flex: 1 }} value={q} onChange={(e) => setQ(e.target.value)} />
+        <Stack direction="row" spacing={1}>
+          <Button variant="outlined" onClick={() => setBulkOpen(true)}>Bulk Upload</Button>
+          <Button variant="contained" onClick={() => setAddOpen(true)}>Add Course</Button>
+        </Stack>
+      </Stack>
+
+      <Paper sx={{ p: 0, borderRadius: 3, boxShadow: 1, border: "1px solid rgba(0,0,0,0.06)" }}>
+        <Table size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Code</TableCell>
+              <TableCell>Name</TableCell>
+              <TableCell>Type</TableCell>
+              <TableCell>Credits</TableCell>
+              <TableCell align="right">Actions</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filtered.map((r: any) => (
+              <TableRow key={r.id} hover>
+                <TableCell>{r.code}</TableCell>
+                <TableCell>{r.name}</TableCell>
+                <TableCell>{r.category}</TableCell>
+                <TableCell>{(Number(r.credits_theory ?? 0) + Number(r.credits_practical ?? 0))}</TableCell>
+                <TableCell align="right">
+                  <IconButton size="small" onClick={(e) => handleMenu(e, r)}>
+                    <MoreVertIcon fontSize="small" />
+                  </IconButton>
+                </TableCell>
+              </TableRow>
+            ))}
+            {!loading && filtered.length === 0 && (
+              <TableRow>
+                <TableCell colSpan={5}>
+                  <Typography variant="body2" color="text.secondary">No courses found.</Typography>
+                </TableCell>
+              </TableRow>
+            )}
+          </TableBody>
+        </Table>
+      </Paper>
+
+      <Menu anchorEl={anchorEl} open={openMenu} onClose={closeMenu} anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}>
+        <MenuItem onClick={() => { closeMenu(); /* TODO: navigate to edit form */ }}>Edit</MenuItem>
+        <MenuItem onClick={() => { closeMenu(); setConfirmOpen(true) }} sx={{ color: 'error.main' }}>Delete</MenuItem>
+      </Menu>
+
+      <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+        <DialogTitle>Delete Course</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">Are you sure you want to delete course <b>{current?.code}</b>?</Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setConfirmOpen(false)}>Cancel</Button>
+          <Button color="error" variant="contained" onClick={onDelete}>Delete</Button>
+        </DialogActions>
+      </Dialog>
+
+      <BulkUploadDialog
+        open={bulkOpen}
+        onClose={() => setBulkOpen(false)}
+        endpoint="/subjects/bulk-upload/"
+        templateUrl="/templates/subjects-template.csv"
+        title="Bulk Upload Courses"
+        onCompleted={() => { setToast({open:true,msg:'Courses uploaded',type:'success'}); fetchRows() }}
+      />
+
+      <AddOneDialog
+        open={addOpen}
+        onClose={() => setAddOpen(false)}
+        title="Add Course"
+        fields={addFields}
+        onSubmit={onAddOne}
+      />
+
+      <Snackbar open={toast.open} autoHideDuration={3000} onClose={() => setToast({...toast, open:false})}>
+        <Alert onClose={() => setToast({...toast, open:false})} severity={toast.type} variant="filled">{toast.msg}</Alert>
+      </Snackbar>
+    </DashboardLayout>
   )
 }

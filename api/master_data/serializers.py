@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Department, Faculty, Room, Student, Subject, Section, Expertise, College
+from .models import Department, Faculty, Room, Student, Subject, Section, Expertise, College, Timetable
 
 
 class CollegeSerializer(serializers.ModelSerializer):
@@ -107,3 +107,24 @@ class SectionSerializer(serializers.ModelSerializer):
         model = Section
         fields = ["id", "department", "department_id",
                   "semester", "name", "size"]
+
+
+class TimetableSerializer(serializers.ModelSerializer):
+    department = DepartmentSerializer(read_only=True)
+    department_id = serializers.PrimaryKeyRelatedField(
+        queryset=Department.objects.all(), source="department", write_only=True
+    )
+
+    class Meta:
+        model = Timetable
+        fields = [
+            "id",
+            "department",
+            "department_id",
+            "section_letter",
+            "year",
+            "semester",
+            "academic_year",
+            "data",
+            "created_at",
+        ]

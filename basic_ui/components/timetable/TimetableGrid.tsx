@@ -73,14 +73,23 @@ export default function TimetableGrid({ data, config, onCellClick, selectedCell 
       )
     }
 
+    const subjectTitle = entry.subjectFullName || entry.subject
+    const teacherLine = entry.teacherShort || entry.teacher
+    const subjectCode = entry.subjectCode
+
     return (
       <Box>
-        <Typography variant="subtitle2" fontWeight="bold" noWrap>
-          {entry.subject}
+        <Typography variant="subtitle2" fontWeight="bold" sx={{ lineHeight: 1.1 }} noWrap title={subjectTitle}>
+          {subjectTitle}
         </Typography>
-        <Typography variant="caption" display="block" noWrap>
-          {entry.teacher}
+        <Typography variant="caption" display="block" sx={{ opacity: 0.9 }} noWrap title={teacherLine}>
+          {teacherLine}
         </Typography>
+        {subjectCode && (
+          <Typography variant="caption" display="block" sx={{ opacity: 0.85 }} noWrap>
+            {subjectCode}
+          </Typography>
+        )}
         <Typography variant="caption" display="block" noWrap>
           Room: {entry.room}
         </Typography>

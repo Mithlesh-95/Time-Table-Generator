@@ -129,3 +129,20 @@ class Section(models.Model):
 
     def __str__(self):
         return f"{self.department.code}-{self.semester}-{self.name}"
+
+
+class Timetable(models.Model):
+    """Stores a generated timetable entity."""
+    department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name="timetables")
+    section_letter = models.CharField(max_length=10)
+    year = models.PositiveIntegerField(default=1)
+    semester = models.CharField(max_length=20)
+    academic_year = models.CharField(max_length=20, blank=True)
+    data = models.JSONField(default=dict)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ["-created_at"]
+
+    def __str__(self):
+        return f"{self.department.code} {self.academic_year} Y{self.year} S{self.semester} Sec {self.section_letter}"
